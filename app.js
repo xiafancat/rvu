@@ -67,9 +67,10 @@ function readFileContent(file) {
     });
 }
 
-const QUESTION_PATH = 'https://github.com/xiafancat/rvu/blob/main/questions.txt'; 
+// 更新为 questions.json 的 URL
+const QUESTION_PATH = 'https://github.com/xiafancat/rvu/blob/main/questions.json'; 
 
-// 更新为GitHub上的完整URL
+// 修改后的 loadQuestion 函数
 async function loadQuestion() {
     try {
         const response = await fetch(QUESTION_PATH);
@@ -84,16 +85,16 @@ async function loadQuestion() {
 
         // 放宽内容类型检查
         const contentType = response.headers.get('content-type') || '';
-        if (!contentType.includes('text/plain')) {
-            console.warn('非标准文本类型:', contentType);
+        if (!contentType.includes('application/json')) {
+            console.warn('非标准JSON类型:', contentType);
         }
 
-        const questionText = await response.text();
-        if (!questionText.trim()) {
-            throw new Error('问题文件内容为空');
+        const questionJson = await response.json();
+        if (!questionJson || !questionJson.question) {
+            throw new Error('问题文件内容无效');
         }
-        
-        return { question: questionText.trim() };
+
+        return { question: questionJson.question };
     } catch (error) {
         console.error('问题加载失败:', error);
         return { 
