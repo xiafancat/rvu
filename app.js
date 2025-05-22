@@ -1,10 +1,15 @@
-    // 配置参数修改为硅基流动API
+const BASE_PATH = window.location.pathname
+    .split('/')
+    .slice(0, -1)
+    .join('/') || '/';
+
 const CONFIG = {
     API_KEY: 'sk-kgojrlfjonnwwdyhusoagmuyagwltrlqkdavhekcnlfcqdyi',
     API_URL: 'https://api.siliconflow.cn/v1/chat/completions',
     MODEL: 'deepseek-ai/DeepSeek-V3',
     MAX_FILE_SIZE: 5 * 1024 * 1024,
-    ALLOWED_TYPES: ['text/plain'] // 移除PDF支持
+    ALLOWED_TYPES: ['text/plain'] 
+    QUESTION_PATH: `${BASE_PATH}/questions.txt` // 动态路径
 }
 
 
