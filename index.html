@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>硅基流动智能助手 (支持附件)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: var(--primary-color); margin-bottom: 1.5rem;">硅基流动智能助手</h1>
+
+        <!-- 文件上传区域 -->
+        <div class="input-group">
+            <input type="file" id="file-input" multiple accept=".txt,.pdf,.docx">
+            <button onclick="handleFileUpload()">上传文件</button>
+        </div>
+        <ul id="file-list"></ul>
+
+        <!-- 问答区域 -->
+<div class="input-group" style="justify-content: flex-end">
+    <button onclick="askQuestion()">分析文件内容</button>
+</div>
+        <div class="loading" id="loading">处理中...</div>
+        <div class="response-container">
+            <button id="copy-button" onclick="copyToClipboard()">复制</button>
+            <div id="response"></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

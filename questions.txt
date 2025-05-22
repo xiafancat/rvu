@@ -1,0 +1,251 @@
+请根据以下维度分析用户上传的评论内容，并按照下面的HTML5格式输出结构化报告并嵌入JavaScript图表。请直接输出结果：
+
+<div id="analysis-report">
+
+    <!-- 图表库依赖 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2"></script>
+
+    <!-- 多维分析区块 -->
+    <section>
+        <h2>满意度分析</h2>
+        <canvas id="sentimentChart" style="height:200px"></canvas>
+        <script>
+        new Chart(document.getElementById('sentimentChart'), {
+            type: 'doughnut',
+            data: { 
+                labels: ['积极', '消极'], 
+                datasets: [{ 
+                    data: [AI_积极比例, AI_消极比例],
+                    backgroundColor: ['#4169E1', '#F44336']
+                }] 
+            }
+        });
+        </script>
+    </section>
+
+    <div class="dual-frequency">
+        <section>
+            <h2>好评特征词频</h2>
+            <div id="positive-frequency" class="frequency-container">
+                <script>
+                (function() {
+                    const total = AI_好评词.reduce((sum, word) => sum + word.weight, 0);
+                    AI_好评词
+                        .sort((a,b) => b.weight - a.weight)
+                        .forEach(word => {
+                            const percentage = ((word.weight / total) * 100).toFixed(2) + '%';
+                            document.write(`
+                                <div class="term">
+                                    <span>${word.text}</span>
+                                    <span class="count">${percentage}</span>
+                                </div>
+                            `);
+                        });
+                })();
+                </script>
+            </div>
+        </section>
+    
+        <section>
+            <h2>差评特征词频</h2>
+            <div id="negative-frequency" class="frequency-container">
+                <script>
+                (function() {
+                    const total = AI_差评词.reduce((sum, word) => sum + word.weight, 0);
+                    AI_差评词
+                        .sort((a,b) => b.weight - a.weight)
+                        .forEach(word => {
+                            const percentage = ((word.weight / total) * 100).toFixed(2) + '%';
+                            document.write(`
+                                <div class="term">
+                                    <span>${word.text}</span>
+                                    <span class="count">${percentage}</span>
+                                </div>
+                            `);
+                        });
+                })();
+                </script>
+            </div>
+        </section>
+    </div>
+
+    <!-- 新增购买动机 -->
+    <section>
+        <h2>购买动机</h2>
+        <div class="motivation-cloud">
+            <script>
+            AI_购买动机.forEach(motive => document.write(`
+                <span class="motive-tag" style="font-size:${motive.weight*0.8+12}px">
+                    ${motive.text}
+                </span>`));
+            </script>
+        </div>
+    </section>
+
+    <!-- 新增使用场景 -->
+    <section>
+        <h2>使用场景</h2>
+        <div class="dual-frequency">
+            <div class="frequency-container">
+                <h3>高频场景</h3>
+                <script>
+                AI_使用场景.slice(0,5).forEach(scene => document.write(`
+                    <div class="term">
+                        <span>${scene.text}</span>
+                        <span class="count">${scene.count}次</span>
+                    </div>`));
+                </script>
+            </div>
+            <div class="frequency-container">
+                <h3>特殊场景</h3>
+                <script>
+                AI_特殊场景.slice(0,3).forEach(scene => document.write(`
+                    <div class="term">
+                        <span>${scene.text}</span>
+                        <span class="count">${scene.ratio}%</span>
+                    </div>`));
+                </script>
+            </div>
+        </div>
+    </section>
+
+    <!-- 问题金字塔分析 -->
+    <div id="problem-pyramid">
+        <div class="layer surface-complaints">表面问题: AI_提取抱怨标签</div>
+        <div class="layer core-painpoints">核心痛点: AI_聚类根因分析</div>
+        <div class="layer root-cause">根本原因: AI_推导产品缺陷</div>
+    </div>
+
+    <!-- 时间序列分析 -->
+    <canvas id="timelineChart"></canvas>
+    <script>
+    new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: {
+            labels: AI_时间节点数组,
+            datasets: [{
+                label: '问题集中度',
+                data: AI_问题频率,
+                borderColor: 'rgb(255, 99, 132)'
+            }]
+        }
+    });
+    </script>
+</div>
+
+
+<style>
+
+/* 新增响应式布局系统 */
+#analysis-report {
+  max-width: 800px;  /* 新增容器最大宽度 */
+  margin: 0 auto;     /* 居中显示 */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+section, #problem-pyramid, .contradiction {
+  width: 90%;         /* 相对容器宽度 */
+  margin: 15px auto;  /* 水平居中 */
+}
+
+canvas {
+  max-width: 100%;    /* 防止图表溢出 */
+  height: auto!important;
+}
+
+.motivation-cloud {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+}
+.motive-tag {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    background: #e3f2fd;
+    border-radius: 15px;
+}
+
+@media (max-width: 768px) {
+    .demographic-grid {
+        grid-template-columns: 1fr;
+    }
+    .solution-matrix {
+        flex-direction: column;
+        text-align: right;
+    }
+}
+
+/* 新增词频样式 */
+.dual-frequency {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin: 30px 0;
+}
+
+.frequency-container {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.term {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    padding: 6px 12px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.count {
+    color: #666;
+    font-family: monospace;
+}
+
+@media (max-width: 768px) {
+    .dual-frequency {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .term {
+        font-size: 14px;
+    }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  #analysis-report { width: 95%; }
+  #problem-pyramid .layer { width: 100%; }
+  #wordcloud { height: 200px!important; }
+}
+
+/* 问题金字塔宽度梯度 */
+#problem-pyramid .layer {
+  width: 80%;
+  transition: width 0.3s;
+  padding:15px; 
+  margin:10px; 
+  border-left:4px solid #007bff;
+}
+#problem-pyramid .surface-complaints { width: 95% }
+#problem-pyramid .core-painpoints { width: 85% }
+#problem-pyramid .root-cause { width: 75% }
+
+.contradiction { 
+  background:#fff3cd; 
+  padding:15px; 
+  border-radius:4px; 
+}
+</style>
+
+分析策略要求：
+1. 实施语义清洗：情感校准→场景标记
+2. 对矛盾评价采用加权决策树处理（如"太重但耐用"标记为[功能权重>外观权重]）
+3. 输出改进方案时按[技术可行性:成本消耗:体验提升]三维评分矩阵排序
