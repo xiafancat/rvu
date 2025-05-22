@@ -1,11 +1,12 @@
     // 配置参数修改为硅基流动API
-    const CONFIG = {
-        API_KEY: 'sk-kgojrlfjonnwwdyhusoagmuyagwltrlqkdavhekcnlfcqdyi',
-        API_URL: 'https://api.siliconflow.cn/v1/chat/completions',  // 硅基API地址
-        MODEL: 'deepseek-ai/DeepSeek-V3',  // 硅基指定模型名称
-        MAX_FILE_SIZE: 5 * 1024 * 1024, // 调整为5MB
-        ALLOWED_TYPES: ['text/plain', 'application/pdf']
-    }
+const CONFIG = {
+    API_KEY: 'sk-kgojrlfjonnwwdyhusoagmuyagwltrlqkdavhekcnlfcqdyi',
+    API_URL: 'https://api.siliconflow.cn/v1/chat/completions',
+    MODEL: 'deepseek-ai/DeepSeek-V3',
+    MAX_FILE_SIZE: 5 * 1024 * 1024,
+    ALLOWED_TYPES: ['text/plain'] // 移除PDF支持
+}
+
 
     let uploadedFiles = [];
 
@@ -66,33 +67,22 @@ function readFileContent(file) {
         reader.readAsText(file, 'UTF-8');
     });
 }
-const QUESTION_PATH = './questions.txt'; 
+const QUESTION_PATH = window.location.hostname.includes('github.io') 
+    ? '/questions.txt'           
 async function loadQuestion() {
     try {
         const response = await fetch(QUESTION_PATH);
-        
-        // 增强状态码检查
-        if (response.status === 404) {
-            throw new Error('问题文件不存在');
-        }
         if (!response.ok) {
-            throw new Error(`服务器错误: ${response.status}`);
+            throw new Error(`加载失败: ${response.status}`);
         }
-
-        // 放宽内容类型检查
-        const contentType = response.headers.get('content-type') || '';
-        if (!contentType.includes('text/plain')) {
-            console.warn('非标准文本类型:', contentType);
-        }
-
-        const questionText = await response.text();
-        if (!questionText.trim()) {
-            throw new Error('问题文件内容为空');
-        }
+        
+        // 强制UTF-8解码
+        const buffer = await response.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        const questionText = decoder.decode(buffer);
         
         return { question: questionText.trim() };
     } catch (error) {
-        console.error('问题加载失败:', error);
         return { 
             question: "请分析并总结上传的文件内容",
             _isFallback: true
