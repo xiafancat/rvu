@@ -2,30 +2,47 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>硅基流动智能助手 (支持附件)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硅基流动 - 评论分析报告生成器</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1 style="color: var(--primary-color); margin-bottom: 1.5rem;">硅基流动智能助手</h1>
-
-        <!-- 文件上传区域 -->
-        <div class="input-group">
-            <input type="file" id="file-input" multiple accept=".txt,.pdf,.docx">
-            <button onclick="handleFileUpload()">上传文件</button>
+        <h1>评论分析报告生成器</h1>
+        <p>上传评论文件，自动生成多维分析报告</p>
+        
+        <div class="upload-section">
+            <h3>上传评论文件</h3>
+            <div class="file-input-wrapper">
+                <div class="file-input-label">选择文件</div>
+                <input type="file" id="file-input" multiple accept=".txt">
+            </div>
+            <p class="hint">支持格式: TXT文本文件 (最大5MB)</p>
+            
+            <ul id="file-list"></ul>
+            
+            <button id="generate-btn">生成分析报告</button>
         </div>
-        <ul id="file-list"></ul>
-
-        <!-- 问答区域 -->
-<div class="input-group" style="justify-content: flex-end">
-    <button onclick="askQuestion()">分析文件内容</button>
-</div>
-        <div class="loading" id="loading">处理中...</div>
-        <div class="response-container">
-            <button id="copy-button" onclick="copyToClipboard()">复制</button>
-            <div id="response"></div>
+        
+        <div class="loading" id="loading">
+            <div>分析中，请稍候...</div>
+            <div class="loader"></div>
+        </div>
+        <div class="error" id="error-message" style="display:none"></div>
+        
+        <div id="result-area">
+            <div class="success" id="success-message"></div>
+            <div class="action-buttons">
+                <button id="download-btn">下载完整报告</button>
+                <button id="view-btn">在当前页面显示</button>
+            </div>
+        </div>
+        
+        <div id="report-viewer">
+            <iframe id="report-frame" sandbox="allow-scripts"></iframe>
         </div>
     </div>
-        <script src="app.js"></script>
+
+    <script src="app.js"></script>
 </body>
 </html>
